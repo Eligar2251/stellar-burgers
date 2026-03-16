@@ -101,11 +101,40 @@ const App = () => {
               element={<ProtectedRoute component={<ProfileOrders />} />}
             />
 
-            <Route path='/ingredients/:id' element={<IngredientDetails />} />
-            <Route path='/feed/:number' element={<OrderInfo />} />
+            <Route
+              path='/ingredients/:id'
+              element={
+                <div className={styles.detailPageWrap}>
+                  <p
+                    className={`text text_type_main-large ${styles.detailHeader}`}
+                  >
+                    Детали ингредиента
+                  </p>
+                  <IngredientDetails />
+                </div>
+              }
+            />
+
+            <Route
+              path='/feed/:number'
+              element={
+                <div className={styles.detailPageWrap}>
+                  <OrderInfo />
+                </div>
+              }
+            />
+
             <Route
               path='/profile/orders/:number'
-              element={<ProtectedRoute component={<OrderInfo />} />}
+              element={
+                <ProtectedRoute
+                  component={
+                    <div className={styles.detailPageWrap}>
+                      <OrderInfo />
+                    </div>
+                  }
+                />
+              }
             />
 
             <Route path='*' element={<NotFound404 />} />

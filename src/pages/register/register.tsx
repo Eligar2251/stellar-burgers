@@ -1,19 +1,11 @@
-import { FC, SyntheticEvent, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { FC, SyntheticEvent, useState } from 'react';
 
 import { RegisterUI } from '@ui-pages';
 import { useDispatch, useSelector } from '../../services/store';
-import {
-  registerUser,
-  selectIsAuthenticated,
-  selectUserError
-} from '../../services/slices/userSlice';
+import { registerUser, selectUserError } from '../../services/slices/userSlice';
 
 export const Register: FC = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  const isAuthenticated = useSelector(selectIsAuthenticated);
   const errorText = useSelector(selectUserError);
 
   const [userName, setUserName] = useState('');
@@ -31,12 +23,6 @@ export const Register: FC = () => {
       })
     );
   };
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate('/', { replace: true });
-    }
-  }, [isAuthenticated, navigate]);
 
   return (
     <RegisterUI
