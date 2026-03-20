@@ -1,25 +1,52 @@
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
+
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
-import { TIngredient } from '@utils-types';
+import { useDispatch, useSelector } from '../../services/store';
+import { selectIngredients } from '../../services/slices/ingredientsSlice';
+import {
+  fetchFeeds,
+  fetchProfileOrders,
+  selectFeedLoading,
+  selectFeedOrders,
+  selectProfileOrders
+} from '../../services/slices/feedSlice';
+import { TIngredient, TOrder } from '@utils-types';
 
 export const OrderInfo: FC = () => {
-  /** TODO: взять переменные orderData и ingredients из стора */
-  const orderData = {
-    createdAt: '',
-    ingredients: [],
-    _id: '',
-    status: '',
-    name: '',
-    updatedAt: 'string',
-    number: 0
-  };
+  const { number } = useParams();
+  const location = useLocation();
+  const dispatch = useDispatch();
 
-  const ingredients: TIngredient[] = [];
+  const ingredients = useSelector(selectIngredients);
+  const feedOrders = useSelector(selectFeedOrders);
+  const profileOrders = useSelector(selectProfileOrders);
+  const isLoading = useSelector(selectFeedLoading);
 
-  /* Готовим данные для отображения */
+  const isProfileOrderRoute = location.pathname.startsWith('/profile/orders');
+
+  const orders = isProfileOrderRoute ? profileOrders : feedOrders;
+
+  useEffect(() => {
+    if (isProfileOrderRoute && !profileOrders.length) {
+      dispatch(fetchProfileOrders());
+    }
+
+    if (!isProfileOrderRoute && !feedOrders.length) {
+      dispatch(fetchFeeds());
+    }
+  }, [dispatch, isProfileOrderRoute, profileOrders.length, feedOrders.length]);
+
+  const orderData = useMemo(
+    () => orders.find((item: TOrder) => item.number === Number(number)) || null,
+    [orders, number]
+  );
+
   const orderInfo = useMemo(() => {
-    if (!orderData || !ingredients.length) return null;
+    if (!orderData || !ingredients.length) {
+      return null;
+    }
 
     const date = new Date(orderData.createdAt);
 
@@ -31,6 +58,7 @@ export const OrderInfo: FC = () => {
       (acc: TIngredientsWithCount, item) => {
         if (!acc[item]) {
           const ingredient = ingredients.find((ing) => ing._id === item);
+
           if (ingredient) {
             acc[item] = {
               ...ingredient,
@@ -59,7 +87,7 @@ export const OrderInfo: FC = () => {
     };
   }, [orderData, ingredients]);
 
-  if (!orderInfo) {
+  if (isLoading || !orderInfo) {
     return <Preloader />;
   }
 
