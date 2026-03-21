@@ -86,13 +86,18 @@
     "url-loader": "^4.1.1"
   },
   "scripts": {
-    "start": "webpack serve --mode=development",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build",
-    "lint": "eslint --ext .js,.jsx,.ts,.tsx ./src",
-    "lint:fix": "npm run lint -- --fix",
-    "format": "prettier ./src --write"
-  },
+  "start": "webpack serve --mode=development",
+  "storybook": "storybook dev -p 6006",
+  "build-storybook": "storybook build",
+  "lint": "eslint --ext .js,.jsx,.ts,.tsx ./src",
+  "lint:fix": "npm run lint -- --fix",
+  "format": "prettier ./src --write",
+  "test": "jest",
+  "test:watch": "jest --watch",
+  "test:coverage": "jest --coverage",
+  "cypress:open": "cypress open",
+  "cypress:run": "cypress run"
+},
   "eslintConfig": {
     "extends": [
       "plugin:storybook/recommended"
